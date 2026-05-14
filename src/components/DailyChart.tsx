@@ -7,16 +7,24 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
-import type { ChartDataPoint, LineConfig } from '../types/chart';
-import { CustomTooltip } from './CustomToolTip';
+} from "recharts";
+import type { ChartDataPoint, LineConfig } from "../types/chart";
+import { CustomTooltip } from "./CustomToolTip";
 
 interface DailyChartProps {
   data: ChartDataPoint[];
   lineConfigs: LineConfig[];
+  /** ระยะเวลา animation (ms) — ใส่ 0 เพื่อปิด animation สำหรับ export */
+  animationDuration?: number;
 }
 
-export function DailyChart({ data, lineConfigs }: DailyChartProps) {
+export function DailyChart({
+  data,
+  lineConfigs,
+  animationDuration = 800,
+}: DailyChartProps) {
+  // ถ้า duration = 0 → ปิด animation ด้วย
+  const isAnimationActive = animationDuration > 0;
   return (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart
@@ -42,12 +50,7 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
 
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
 
-        <XAxis
-          dataKey="hour"
-          stroke="#6b7280"
-          fontSize={12}
-          tickLine={false}
-        />
+        <XAxis dataKey="hour" stroke="#6b7280" fontSize={12} tickLine={false} />
 
         {lineConfigs.map((config) => (
           <YAxis
@@ -71,9 +74,9 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
         <Tooltip
           content={<CustomTooltip lineConfigs={lineConfigs} />}
           cursor={{
-            stroke: '#9ca3af',       // สีเทากลาง
+            stroke: "#9ca3af", // สีเทากลาง
             strokeWidth: 1,
-            strokeDasharray: '3 3',  // เส้นประ
+            strokeDasharray: "3 3", // เส้นประ
           }}
         />
 
@@ -102,7 +105,8 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
             strokeWidth={2}
             dot={{ r: 3, fill: config.color }}
             activeDot={{ r: 5 }}
-            animationDuration={800}
+            animationDuration={animationDuration} // ← ใช้จาก prop
+            isAnimationActive={isAnimationActive}
           />
         ))}
       </ComposedChart>
