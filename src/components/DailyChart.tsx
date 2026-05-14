@@ -6,6 +6,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
 import type { ChartDataPoint, LineConfig } from "../types/chart";
@@ -26,7 +27,7 @@ export function DailyChart({
   // ถ้า duration = 0 → ปิด animation ด้วย
   const isAnimationActive = animationDuration > 0;
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={440}>
       <ComposedChart
         data={data}
         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
@@ -66,6 +67,24 @@ export function DailyChart({
           />
         ))}
 
+        {/* Legend ใต้กราฟ — แสดงชื่อ + สีของแต่ละเส้น */}
+        <Legend
+          verticalAlign="bottom"
+          height={36}
+          iconType="circle"
+          iconSize={10}
+          wrapperStyle={{ paddingTop: "12px" }}
+          formatter={(value) => {
+            // หา label ภาษาไทยจาก lineConfigs โดย match กับ dataKey
+            const config = lineConfigs.find((c) => c.key === value);
+            return (
+              <span style={{ color: "#374151", fontSize: "13px" }}>
+                {config?.label ?? value}
+              </span>
+            );
+          }}
+        />
+
         {/*
           Custom Tooltip + vertical cursor line
           - content: ส่ง CustomTooltip component (Recharts จะ inject props ให้)
@@ -91,6 +110,7 @@ export function DailyChart({
             fill={`url(#gradient-${config.key})`}
             fillOpacity={1}
             isAnimationActive={false}
+            legendType="none"  // ไม่ให้ขึ้นใน Legend เพราะเรมี Line อยู่แล้ว
           />
         ))}
 
