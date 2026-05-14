@@ -1,10 +1,20 @@
-import { useState } from 'react';
-import { DailyChart } from './components/DailyChart';
-import { ExportButton } from './components/ExportButton';
-import { generateMockData, LINE_CONFIGS } from './lib/mockData';
+import { useState } from "react";
+import { DailyChart } from "./components/DailyChart";
+import { ExportButton } from "./components/ExportButton";
+import { RefreshButton } from "./components/RefreshButton";
+import { generateMockData, LINE_CONFIGS } from "./lib/mockData";
 
 function App() {
-  const [data] = useState(() => generateMockData());
+  const [data, setData] = useState(() => generateMockData());
+
+  /**
+   * Refresh data — สุ่มข้อมูลใหม่
+   * - เปลี่ยน state → React จะ re-render กราฟ
+   * - กราฟ animate ใหม่ตั้งแต่ต้น (เพราะ key เดิม + data ใหม่)
+   */
+  function handleRefresh() {
+    setData(generateMockData());
+  }
 
   return (
     <div className="min-h-screen p-4 sm:p-6 lg:p-8">
@@ -21,16 +31,21 @@ function App() {
 
         {/* Chart Card */}
         <div className="bg-card border border-border rounded-xl p-3 sm:p-4 lg:p-6 shadow-sm">
-          {/* Header ของ card */}
+          {/* Card Header: title + 2 buttons */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <h2 className="text-base sm:text-lg font-semibold text-text-primary">
               Daily Graph
             </h2>
-            <ExportButton
-              data={data}
-              lineConfigs={LINE_CONFIGS}
-              filename="daily-graph"
-            />
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <RefreshButton onRefresh={handleRefresh} />
+              <ExportButton
+                data={data}
+                lineConfigs={LINE_CONFIGS}
+                filename="daily-graph"
+              />
+            </div>
           </div>
 
           <DailyChart data={data} lineConfigs={LINE_CONFIGS} />
