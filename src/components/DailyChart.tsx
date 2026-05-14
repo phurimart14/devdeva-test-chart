@@ -9,19 +9,13 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { ChartDataPoint, LineConfig } from '../types/chart';
+import { CustomTooltip } from './CustomToolTip';
 
 interface DailyChartProps {
   data: ChartDataPoint[];
   lineConfigs: LineConfig[];
 }
 
-/**
- * กราฟเส้น 3 เส้น + Area fill ใต้แต่ละเส้น
- *
- * - ใช้ <ComposedChart> เพื่อรวม <Line> + <Area> ในกราฟเดียว
- * - แต่ละเส้นมี gradient fill ใต้ตัวเอง (linearGradient)
- * - opacity ต่ำ → ไม่บังเส้นอื่น
- */
 export function DailyChart({ data, lineConfigs }: DailyChartProps) {
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -29,13 +23,7 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
         data={data}
         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
       >
-        {/*
-          Gradient definitions
-          - แต่ละเส้นมี gradient ของตัวเอง (id ตาม key)
-          - บนสุด: สีเข้ม opacity 0.3
-          - ล่างสุด: สีเดียวกัน opacity 0
-          → ทำให้ดูจาง ๆ ไล่ลงไปด้านล่าง
-        */}
+        {/* Gradients สำหรับ Area fill */}
         <defs>
           {lineConfigs.map((config) => (
             <linearGradient
@@ -52,10 +40,8 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
           ))}
         </defs>
 
-        {/* Grid พื้นหลัง */}
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
 
-        {/* X-axis: ชั่วโมง */}
         <XAxis
           dataKey="hour"
           stroke="#6b7280"
@@ -63,7 +49,6 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
           tickLine={false}
         />
 
-        {/* Y-axes 3 ตัว */}
         {lineConfigs.map((config) => (
           <YAxis
             key={config.yAxisId}
@@ -78,27 +63,35 @@ export function DailyChart({ data, lineConfigs }: DailyChartProps) {
           />
         ))}
 
-        {/* Tooltip default — Step 6 จะ custom */}
-        <Tooltip />
-
         {/*
-          Area ใต้แต่ละเส้น — render ก่อน Line
-          เพื่อให้ Line อยู่ "ทับ" บน Area (z-order)
+          Custom Tooltip + vertical cursor line
+          - content: ส่ง CustomTooltip component (Recharts จะ inject props ให้)
+          - cursor: เส้น vertical ตอน hover (เหมือนใน PDF)
         */}
+        <Tooltip
+          content={<CustomTooltip lineConfigs={lineConfigs} />}
+          cursor={{
+            stroke: '#9ca3af',       // สีเทากลาง
+            strokeWidth: 1,
+            strokeDasharray: '3 3',  // เส้นประ
+          }}
+        />
+
+        {/* Areas (ใต้เส้น) */}
         {lineConfigs.map((config) => (
           <Area
             key={`area-${config.key}`}
             type="monotone"
             dataKey={config.key}
             yAxisId={config.yAxisId}
-            stroke="none"                              // ไม่ต้องมีเส้นขอบ (เส้นจริงจะ render จาก <Line>)
-            fill={`url(#gradient-${config.key})`}      // ใช้ gradient ที่ define ไว้
+            stroke="none"
+            fill={`url(#gradient-${config.key})`}
             fillOpacity={1}
-            isAnimationActive={false}                  // ปิด animation ของ Area (Line จะ animate แทน)
+            isAnimationActive={false}
           />
         ))}
 
-        {/* Lines 3 เส้น — render หลัง Area เพื่อให้อยู่ด้านบน */}
+        {/* Lines */}
         {lineConfigs.map((config) => (
           <Line
             key={`line-${config.key}`}
