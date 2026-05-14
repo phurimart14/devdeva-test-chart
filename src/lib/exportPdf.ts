@@ -90,6 +90,7 @@ function createExportContent(
         data,
         lineConfigs,
         animationDuration: 0,
+        forceViewport: "desktop",
       }),
     ),
   );
