@@ -1,28 +1,27 @@
-import { generateMockData, LINE_CONFIGS } from './lib/mockData';
+import { useState } from "react";
+import { DailyChart } from "./components/DailyChart";
+import { generateMockData, LINE_CONFIGS } from "./lib/mockData";
 
 function App() {
-  const data = generateMockData();
+  // lazy init — generator รันแค่ครั้งแรก
+  const [data] = useState(() => generateMockData());
 
   return (
     <div className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold text-chart-green">
-        Chart Dashboard 📊
-      </h1>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-text-primary">Daily Graph</h1>
+          <p className="mt-1 text-text-secondary">
+            Multi-axis line chart — 3 metrics over 24 hours
+          </p>
+        </div>
 
-      {/* Debug: จำนวน data points */}
-      <p className="mt-2 text-text-secondary">
-        Generated <strong>{data.length}</strong> data points ✅
-      </p>
-
-      {/* Debug: 3 จุดแรก */}
-      <pre className="mt-4 p-4 bg-card border border-border rounded-lg text-sm overflow-auto">
-        {JSON.stringify(data.slice(0, 3), null, 2)}
-      </pre>
-
-      {/* Debug: line configs */}
-      <pre className="mt-4 p-4 bg-card border border-border rounded-lg text-sm overflow-auto">
-        {JSON.stringify(LINE_CONFIGS, null, 2)}
-      </pre>
+        {/* Chart Card */}
+        <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+          <DailyChart data={data} lineConfigs={LINE_CONFIGS} />
+        </div>
+      </div>
     </div>
   );
 }

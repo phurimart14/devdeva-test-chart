@@ -1,4 +1,4 @@
-import type { ChartDataPoint, LineConfig } from '../types/chart';
+import type { ChartDataPoint, LineConfig } from "../types/chart";
 
 /**
  * Random ตัวเลขในช่วง [min, max] (รวม min, max)
@@ -13,7 +13,7 @@ function randomInRange(min: number, max: number, decimals = 0): number {
  * Format ตัวเลขเป็น "HH:00"
  */
 function formatHour(hour: number): string {
-  return `${String(hour).padStart(2, '0')}:00`;
+  return `${String(hour).padStart(2, "0")}:00`;
 }
 
 /**
@@ -24,35 +24,39 @@ export function generateMockData(): ChartDataPoint[] {
     hour: formatHour(i),
     green: randomInRange(0, 100),
     yellow: randomInRange(-100, 100),
-    blue: randomInRange(0, 10, 1),  // 1 ทศนิยม ให้เส้นลื่นขึ้น
+    blue: randomInRange(0, 10, 1), // 1 ทศนิยม ให้เส้นลื่นขึ้น
   }));
 }
 
 /**
  * Config ของ 3 เส้น
- * ⚠️ Note: ลำดับใน array ไม่ได้ control ตำแหน่ง axis บนจอ
- *    (Recharts จัดเอง) — แต่เราจะ control ผ่าน width/padding ใน Step 4
+ *
+ * ⚠️ ลำดับใน array นี้ = ลำดับ render YAxis ใน JSX
+ * ใน Recharts: YAxis ที่ render ก่อน = อยู่ติดกราฟ → render หลัง = ออกซ้าย
+ *
+ * Spec ต้องการ axes ซ้าย→ขวา: น้ำเงิน → ส้ม → เขียว
+ * ดังนั้น render order ต้องเป็น: เขียว (ติดกราฟ) → ส้ม → น้ำเงิน (ซ้ายสุด)
  */
 export const LINE_CONFIGS: LineConfig[] = [
   {
     key: 'green',
     label: 'สีเขียว',
     color: 'var(--color-chart-green)',
-    yAxisId: 'green',
+    yAxisId: '1-green',   // ← prefix ตัวเลข เพื่อ control alphabetical sort
     domain: [0, 100],
   },
   {
     key: 'yellow',
     label: 'สีส้ม',
     color: 'var(--color-chart-yellow)',
-    yAxisId: 'yellow',
+    yAxisId: '2-yellow',  // ← กลาง
     domain: [-100, 100],
   },
   {
     key: 'blue',
     label: 'สีน้ำเงิน',
     color: 'var(--color-chart-blue)',
-    yAxisId: 'blue',
+    yAxisId: '3-blue',    // ← ซ้ายสุด
     domain: [0, 10],
   },
 ];
