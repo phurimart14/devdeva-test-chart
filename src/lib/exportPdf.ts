@@ -6,7 +6,7 @@ import { DailyChart } from "../components/DailyChart";
 import type { ChartDataPoint, LineConfig } from "../types/chart";
 
 const EXPORT_WIDTH = 1280;
-const EXPORT_HEIGHT = 560; // เพิ่มความสูงให้พอดี title + chart
+const EXPORT_HEIGHT = 640; // เพิ่มความสูงให้พอดี title + chart
 
 /**
  * สร้าง JSX ของ "Chart Card" สำหรับ export
@@ -24,34 +24,74 @@ function createExportContent(
       style: {
         width: "100%",
         height: "100%",
-        padding: "24px",
-        background: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: "12px",
+        padding: "32px",
+        background: "#f9fafb",
         boxSizing: "border-box",
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       },
     },
-    // Title
+
+    // Page Header (H1 + subtitle)
     createElement(
-      "h2",
+      "div",
+      { style: { marginBottom: "20px" } },
+      createElement(
+        "h1",
+        {
+          style: {
+            fontSize: "30px",
+            fontWeight: 700,
+            color: "#111827",
+            margin: "0 0 4px 0",
+            letterSpacing: "-0.025em",
+          },
+        },
+        "Daily Graph",
+      ),
+      createElement(
+        "p",
+        {
+          style: {
+            fontSize: "14px",
+            color: "#6b7280",
+            margin: 0,
+          },
+        },
+        "Multi-axis line chart — 3 metrics over 24 hours",
+      ),
+    ),
+
+    // Chart Card
+    createElement(
+      "div",
       {
         style: {
-          fontSize: "18px",
-          fontWeight: 600,
-          color: "#111827",
-          margin: "0 0 16px 0",
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+          padding: "24px",
+          boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
         },
       },
-      "Daily Graph",
+      createElement(
+        "h2",
+        {
+          style: {
+            fontSize: "18px",
+            fontWeight: 600,
+            color: "#111827",
+            margin: "0 0 16px 0",
+          },
+        },
+        "Daily Graph",
+      ),
+      createElement(DailyChart, {
+        data,
+        lineConfigs,
+        animationDuration: 0,
+      }),
     ),
-    // Chart (ปิด animation)
-    createElement(DailyChart, {
-      data,
-      lineConfigs,
-      animationDuration: 0, // ← ปิด animation 100%
-    }),
   );
 }
 
