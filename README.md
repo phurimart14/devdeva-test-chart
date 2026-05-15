@@ -154,7 +154,7 @@ Recharts มี animation วาดเส้นจากซ้ายไปขว
 - 📧 Email: [phurimart14@gmail.com]
 - 🐙 GitHub: [@phurimart14](https://github.com/phurimart14/devdeva-test-chart)
 
-Frontend Developer · React / TypeScript / Next.js
+Frontend Developer · React / TypeScript /
 
 ---
 
