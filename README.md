@@ -8,7 +8,7 @@
 
 ## 🔗 Live Demo
 
-**👉 [DEMO_URL_HERE]** ← จะใส่หลังจาก Deploy
+**👉 [https://devdeva-test-chart.vercel.app/]** 
 
 ---
 
